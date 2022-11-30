@@ -5,6 +5,6 @@ FactoryBot.define do
     user { create(:user) }
     file_path { Faker::LoremFlickr.image }
     title { Faker::Book.title }
-    type { %w[resume cover_letter photo].sample }
+    kind { %w[resume cover_letter photo].sample }
   end
 end

@@ -6,7 +6,7 @@ RSpec.describe Attachment, type: :model do
   describe 'when db schema' do
     let(:model) { described_class.column_names }
 
-    %w[user_id title file_path type].each do |column|
+    %w[user_id title file_path kind].each do |column|
       it { expect(model).to include(column) }
     end
   end
@@ -18,7 +18,7 @@ RSpec.describe Attachment, type: :model do
     it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_length_of(:title).is_at_most(150) }
 
-    it { is_expected.to define_enum_for(:type).with_values(%i[resume cover_letter photo]) }
+    it { is_expected.to define_enum_for(:kind).with_values(%i[resume cover_letter photo]) }
   end
 
   describe '.associations' do

@@ -4,7 +4,7 @@ class CreateAttachments < ActiveRecord::Migration[7.0]
       t.references :user, null: false, foreign_key: true
       t.string :file_path
       t.string :title
-      t.integer :type
+      t.integer :kind
 
       t.timestamps
     end
