@@ -15,6 +15,22 @@ RSpec.configure do |config|
       paths: {},
       components: {
         schemas: {
+          User: {
+            type: :object,
+            properties: {
+              id: { type: :string },
+              type: { type: :string, example: 'users' },
+              attributes: {
+                type: :object,
+                properties: {
+                  name: { type: :string },
+                  email: { type: :string, example: 'email@app.com' },
+                  role: { type: :string, enum: %w[admin job_seeker employer] }
+                },
+                required: %w[name email role]
+              }
+            }
+          }
         },
         securitySchemes: {
           bearer: {

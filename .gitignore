@@ -15,7 +15,7 @@
 .env
 .env.*
 /coverage/*
-./spec/examples.txt
+spec/examples.txt
 # Ignore pidfiles, but keep the directory.
 /tmp/pids/*
 !/tmp/pids/

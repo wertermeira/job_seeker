@@ -1,0 +1,181 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/users":
+    get:
+      summary: List users
+      tags:
+      - Users
+      responses:
+        '200':
+          description: Users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/User"
+    post:
+      summary: Create user
+      tags:
+      - Users
+      description: Create new user
+      parameters: []
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/User"
+        '422':
+          description: Unprocessable Entity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    role:
+                      type: string
+                      enum:
+                      - admin
+                      - job_seeker
+                      - employer
+                  required:
+                  - name
+                  - email
+                  - role
+  "/users/{id}":
+    get:
+      summary: Show user
+      tags:
+      - Users
+      description: Show a user
+      parameters:
+      - name: id
+        in: path
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/User"
+        '404':
+          description: Not found
+    put:
+      summary: Update user
+      tags:
+      - Users
+      description: Update a user
+      parameters:
+      - name: id
+        in: path
+        required: true
+      responses:
+        '202':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/User"
+        '422':
+          description: Unprocessable Entity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    role:
+                      type: string
+                      enum:
+                      - admin
+                      - job_seeker
+                      - employer
+                  required:
+                  - name
+                  - email
+                  - role
+    delete:
+      summary: Destroy a user
+      tags:
+      - Users
+      description: Destroy a user
+      parameters:
+      - name: id
+        in: path
+        required: true
+      responses:
+        '204':
+          description: Not contet
+        '404':
+          description: Not found
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          example: users
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              example: email@app.com
+            role:
+              type: string
+              enum:
+              - admin
+              - job_seeker
+              - employer
+          required:
+          - name
+          - email
+          - role
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000

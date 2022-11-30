@@ -4,6 +4,6 @@ FactoryBot.define do
   factory :user do
     name { Faker::Name.name }
     email { Faker::Internet.email }
-    role { %w[admin jobseeker employer] }
+    role { %w[admin job_seeker employer].sample }
   end
 end
