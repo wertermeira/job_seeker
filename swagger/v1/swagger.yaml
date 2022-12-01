@@ -21,6 +21,10 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/User"
+                  included:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Attachment"
     post:
       summary: Create user
       tags:
@@ -37,6 +41,10 @@ paths:
                 properties:
                   data:
                     "$ref": "#/components/schemas/User"
+                  included:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Attachment"
         '422':
           description: Unprocessable Entity
       requestBody:
@@ -58,6 +66,22 @@ paths:
                       - admin
                       - job_seeker
                       - employer
+                    attachments_attributes:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                          file_path:
+                            type: string
+                            example: https://loremflickr.com/300/300
+                          kind:
+                            type: string
+                            enum:
+                            - resume
+                            - cover_letter
+                            - photo
                   required:
                   - name
                   - email
@@ -82,6 +106,10 @@ paths:
                 properties:
                   data:
                     "$ref": "#/components/schemas/User"
+                  included:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Attachment"
         '404':
           description: Not found
     put:
@@ -103,6 +131,10 @@ paths:
                 properties:
                   data:
                     "$ref": "#/components/schemas/User"
+                  included:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Attachment"
         '422':
           description: Unprocessable Entity
       requestBody:
@@ -124,6 +156,26 @@ paths:
                       - admin
                       - job_seeker
                       - employer
+                    attachments_attributes:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          title:
+                            type: string
+                          file_path:
+                            type: string
+                            example: https://loremflickr.com/300/300
+                          kind:
+                            type: string
+                            enum:
+                            - resume
+                            - cover_letter
+                            - photo
+                          _destroy:
+                            type: boolean
                   required:
                   - name
                   - email
@@ -144,6 +196,28 @@ paths:
           description: Not found
 components:
   schemas:
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          example: attachments
+        attributes:
+          type: object
+          properties:
+            title:
+              type: string
+            kind:
+              type: string
+              enum:
+              - resume
+              - cover_letter
+              - photo
+            file_path:
+              type: string
+              example: https://loremflickr.com/300/300
     User:
       type: object
       properties:
@@ -166,14 +240,35 @@ components:
               - admin
               - job_seeker
               - employer
+            attachment_count:
+              type: object
+              properties:
+                resume:
+                  type: integer
+                cover_letter:
+                  type: integer
+                photo:
+                  type: integer
           required:
           - name
           - email
           - role
-  securitySchemes:
-    bearer:
-      type: http
-      scheme: bearer
+        relationships:
+          type: object
+          properties:
+            attachments:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      type:
+                        type: string
+                        example: attachments
 servers:
 - url: http://{defaultHost}
   variables:

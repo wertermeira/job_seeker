@@ -22,27 +22,28 @@ RSpec.describe User, type: :model do
     it { is_expected.to define_enum_for(:role).with_values(%i[admin job_seeker employer]).with_prefix(:role) }
 
     context 'when custom validate' do
-      let(:attachments_attributes) {
+      let(:attachments_attributes) do
         {
           file_path: 'http://site.com/image.jpg',
           title: Faker::Name.name,
           kind: kind
         }
-      }
-      let(:user) {
+      end
+      let(:user) do
         {
           name: Faker::Name.name,
           email: email,
           role: role,
           attachments_attributes: Array.new(attach_times) { attachments_attributes }
         }
-      }
+      end
 
       context 'when valid' do
         let(:email) { '' }
         let(:role) { 'job_seeker' }
         let(:kind) { 'resume' }
         let(:attach_times) { 1 }
+
         it do
           expect(described_class.new(user)).to be_valid
         end
@@ -53,6 +54,7 @@ RSpec.describe User, type: :model do
         let(:role) { 'job_seeker' }
         let(:kind) { 'resume' }
         let(:attach_times) { rand(2..5) }
+
         it do
           expect(described_class.new(user)).to be_valid
         end
@@ -63,6 +65,7 @@ RSpec.describe User, type: :model do
         let(:role) { 'job_seeker' }
         let(:kind) { 'resume' }
         let(:attach_times) { rand(2..10) }
+
         it do
           to_validate = described_class.new(user)
           to_validate.valid?

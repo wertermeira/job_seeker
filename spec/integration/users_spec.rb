@@ -11,7 +11,8 @@ RSpec.describe '/users', type: :request do
       response 200, 'Users' do
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/User' } }
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/User' } },
+                 included: { type: :array, items: { '$ref' => '#/components/schemas/Attachment' } }
                }
         let(:users_count) { rand(1..10) }
         before { create_list(:user, users_count) }
@@ -35,7 +36,18 @@ RSpec.describe '/users', type: :request do
             properties: {
               name: { type: :string },
               email: { type: :string },
-              role: { type: :string, enum: %w[admin job_seeker employer] }
+              role: { type: :string, enum: User.roles.keys },
+              attachments_attributes: {
+                type: :array,
+                items: {
+                  type: :object,
+                  properties: {
+                    title: { type: :string },
+                    file_path: { type: :string, example: Faker::LoremFlickr.image },
+                    kind: { type: :string, enum: Attachment.kinds.keys }
+                  }
+                }
+              }
             },
             required: %w[name email role]
           }
@@ -45,19 +57,29 @@ RSpec.describe '/users', type: :request do
       response 201, 'Created' do
         schema type: :object,
                properties: {
-                 data: { '$ref' => '#/components/schemas/User' }
+                 data: { '$ref' => '#/components/schemas/User' },
+                 included: { type: :array, items: { '$ref' => '#/components/schemas/Attachment' } }
                }
         let(:user) do
           {
             user: {
               name: Faker::Name.name,
               email: Faker::Internet.email,
-              role: %w[admin job_seeker employer].sample
+              role: %w[admin job_seeker employer].sample,
+              attachments_attributes: [
+                {
+                  kind: Attachment.kinds.keys.sample,
+                  file_path: Faker::LoremFlickr.image,
+                  title: Faker::Name.name
+                }
+              ]
             }
           }
         end
 
-        run_test!
+        run_test! do
+          expect(json_body.dig('data', 'relationships', 'attachments', 'data').length).to eq(1)
+        end
       end
 
       response 422, 'Unprocessable Entity' do
@@ -86,7 +108,8 @@ RSpec.describe '/users', type: :request do
       response 200, 'Success' do
         schema type: :object,
                properties: {
-                 data: { '$ref' => '#/components/schemas/User' }
+                 data: { '$ref' => '#/components/schemas/User' },
+                 included: { type: :array, items: { '$ref' => '#/components/schemas/Attachment' } }
                }
         let(:id) { create(:user).id }
         run_test!
@@ -112,7 +135,20 @@ RSpec.describe '/users', type: :request do
             properties: {
               name: { type: :string },
               email: { type: :string },
-              role: { type: :string, enum: %w[admin job_seeker employer] }
+              role: { type: :string, enum: %w[admin job_seeker employer] },
+              attachments_attributes: {
+                type: :array,
+                items: {
+                  type: :object,
+                  properties: {
+                    id: { type: :integer },
+                    title: { type: :string },
+                    file_path: { type: :string, example: Faker::LoremFlickr.image },
+                    kind: { type: :string, enum: Attachment.kinds.keys },
+                    _destroy: { type: :boolean }
+                  }
+                }
+              }
             },
             required: %w[name email role]
           }
@@ -120,22 +156,57 @@ RSpec.describe '/users', type: :request do
       }
 
       response 202, 'Updated' do
+        let(:user_object) { create(:user) }
         schema type: :object,
                properties: {
-                 data: { '$ref' => '#/components/schemas/User' }
+                 data: { '$ref' => '#/components/schemas/User' },
+                 included: { type: :array, items: { '$ref' => '#/components/schemas/Attachment' } }
                }
-        let(:id) { create(:user).id }
+        let(:id) { user_object.id }
         let(:name) { Faker::Name.name }
-        let(:user) do
-          {
-            user: {
-              name: name
+        let(:new_title) { Faker::Name.name }
+        let(:attachment) { create(:attachment, user: user_object) }
+
+        context 'when update title from attachment' do
+          let(:user) do
+            {
+              user: {
+                name: name,
+                attachments_attributes: [
+                  {
+                    id: attachment.id,
+                    kind: Attachment.kinds.keys.sample,
+                    title: new_title,
+                    file_path: Faker::LoremFlickr.image
+                  }
+                ]
+              }
             }
-          }
+          end
+
+          run_test! do
+            expect(attachment.reload.title).to eq(new_title)
+          end
         end
 
-        run_test! do
-          expect(json_body.dig('data', 'attributes', 'name')).to eq(name)
+        context 'when destroy attachment' do
+          let(:user) do
+            {
+              user: {
+                name: name,
+                attachments_attributes: [
+                  {
+                    id: attachment.id,
+                    _destroy: true
+                  }
+                ]
+              }
+            }
+          end
+
+          run_test! do
+            expect(Attachment.find_by(id: attachment.id)).to be_nil
+          end
         end
       end
 

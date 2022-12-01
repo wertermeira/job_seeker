@@ -9,18 +9,25 @@ class User < ApplicationRecord
   validates :email, presence: true, unless: -> { role_job_seeker? }
   validates :name, length: { maximum: 150 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
-  validate :validate_max_resume, if: -> { role_job_seeker? &&  email.blank? }
+  validate :validate_max_resume, if: -> { role_job_seeker? && email.blank? }
 
   accepts_nested_attributes_for :attachments, allow_destroy: true
 
   def attachment_count
-    attachments.map { |attach| attach.kind  }.tally
+    Attachment.kinds.keys.index_with do |i|
+      attachment_tally[i] || 0
+    end
   end
 
   private
 
   def validate_max_resume
-    resumes = attachments.map { |attach| attach.kind  }.tally['resume'] || 0
-    errors.add(:attachments_attributes, 'to add more resumes. email is required') if resumes > 1
+    return unless (attachment_tally['resume'] || 0) > 1
+
+    errors.add(:attachments_attributes, 'to add more resumes. email is required')
+  end
+
+  def attachment_tally
+    @attachment_tally ||= attachments.map(&:kind).tally
   end
 end

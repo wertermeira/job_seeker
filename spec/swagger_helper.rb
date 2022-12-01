@@ -15,6 +15,21 @@ RSpec.configure do |config|
       paths: {},
       components: {
         schemas: {
+          Attachment: {
+            type: :object,
+            properties: {
+              id: { type: :string },
+              type: { type: :string, example: 'attachments' },
+              attributes: {
+                type: :object,
+                properties: {
+                  title: { type: :string },
+                  kind: { type: :string, enum: Attachment.kinds.keys },
+                  file_path: { type: :string, example: Faker::LoremFlickr.image }
+                }
+              }
+            }
+          },
           User: {
             type: :object,
             properties: {
@@ -25,17 +40,39 @@ RSpec.configure do |config|
                 properties: {
                   name: { type: :string },
                   email: { type: :string, example: 'email@app.com' },
-                  role: { type: :string, enum: %w[admin job_seeker employer] }
+                  role: { type: :string, enum: User.roles.keys },
+                  attachment_count: {
+                    type: :object,
+                    properties: {
+                      resume: { type: :integer },
+                      cover_letter: { type: :integer },
+                      photo: { type: :integer }
+                    }
+                  }
                 },
                 required: %w[name email role]
+              },
+              relationships: {
+                type: :object,
+                properties: {
+                  attachments: {
+                    type: :object,
+                    properties: {
+                      data: {
+                        type: :array,
+                        items: {
+                          type: :object,
+                          properties: {
+                            id: { type: :string },
+                            type: { type: :string, example: 'attachments' }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
-          }
-        },
-        securitySchemes: {
-          bearer: {
-            type: :http,
-            scheme: :bearer
           }
         }
       },
