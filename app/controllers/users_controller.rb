@@ -41,6 +41,7 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :role, attachments_attributes: %i[id title file_path kind _destroy])
+    params.require(:user).permit(:name, :email, :user_role,
+                                 attachments_attributes: %i[id title file_path kind _destroy])
   end
 end

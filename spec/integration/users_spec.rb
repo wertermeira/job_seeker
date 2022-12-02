@@ -36,7 +36,7 @@ RSpec.describe '/users', type: :request do
             properties: {
               name: { type: :string },
               email: { type: :string },
-              role: { type: :string, enum: User.roles.keys },
+              user_role: { type: :string, enum: User.user_roles.keys },
               attachments_attributes: {
                 type: :array,
                 items: {
@@ -49,7 +49,7 @@ RSpec.describe '/users', type: :request do
                 }
               }
             },
-            required: %w[name email role]
+            required: %w[name email user_role]
           }
         }
       }
@@ -65,7 +65,7 @@ RSpec.describe '/users', type: :request do
             user: {
               name: Faker::Name.name,
               email: Faker::Internet.email,
-              role: %w[admin job_seeker employer].sample,
+              user_role: %w[admin job_seeker employer].sample,
               attachments_attributes: [
                 {
                   kind: Attachment.kinds.keys.sample,
@@ -135,7 +135,7 @@ RSpec.describe '/users', type: :request do
             properties: {
               name: { type: :string },
               email: { type: :string },
-              role: { type: :string, enum: %w[admin job_seeker employer] },
+              user_role: { type: :string, enum: %w[admin job_seeker employer] },
               attachments_attributes: {
                 type: :array,
                 items: {
@@ -150,7 +150,7 @@ RSpec.describe '/users', type: :request do
                 }
               }
             },
-            required: %w[name email role]
+            required: %w[name email user_role]
           }
         }
       }

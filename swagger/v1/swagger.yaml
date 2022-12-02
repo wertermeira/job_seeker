@@ -60,7 +60,7 @@ paths:
                       type: string
                     email:
                       type: string
-                    role:
+                    user_role:
                       type: string
                       enum:
                       - admin
@@ -85,7 +85,7 @@ paths:
                   required:
                   - name
                   - email
-                  - role
+                  - user_role
   "/users/{id}":
     get:
       summary: Show user
@@ -150,7 +150,7 @@ paths:
                       type: string
                     email:
                       type: string
-                    role:
+                    user_role:
                       type: string
                       enum:
                       - admin
@@ -179,7 +179,7 @@ paths:
                   required:
                   - name
                   - email
-                  - role
+                  - user_role
     delete:
       summary: Destroy a user
       tags:
@@ -234,7 +234,7 @@ components:
             email:
               type: string
               example: email@app.com
-            role:
+            user_role:
               type: string
               enum:
               - admin
@@ -252,7 +252,7 @@ components:
           required:
           - name
           - email
-          - role
+          - user_role
         relationships:
           type: object
           properties:

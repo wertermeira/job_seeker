@@ -3,13 +3,13 @@
 class User < ApplicationRecord
   has_many :attachments, dependent: :destroy
 
-  enum role: { admin: 0, job_seeker: 1, employer: 2 }, _prefix: :role
+  enum user_role: { admin: 0, job_seeker: 1, employer: 2 }, _prefix: :user_role
 
   validates :name, presence: true
-  validates :email, presence: true, unless: -> { role_job_seeker? }
+  validates :email, presence: true, unless: -> { user_role_job_seeker? }
   validates :name, length: { maximum: 150 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
-  validate :validate_max_resume, if: -> { role_job_seeker? && email.blank? }
+  validate :validate_max_resume, if: -> { user_role_job_seeker? && email.blank? }
 
   accepts_nested_attributes_for :attachments, allow_destroy: true
 

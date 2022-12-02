@@ -29,13 +29,13 @@ development:
   <<: *default
   database: job_seeker_development
 
-  # The specified database role being used to connect to postgres.
-  # To create additional roles in postgres see `$ createuser --help`.
-  # When left blank, postgres will use the default role. This is
+  # The specified database user_role being used to connect to postgres.
+  # To create additional user_roles in postgres see `$ createuser --help`.
+  # When left blank, postgres will use the default user_role. This is
   # the same name as the operating system user running Rails.
   #username: job_seeker
 
-  # The password associated with the postgres role (username).
+  # The password associated with the postgres user_role (username).
   #password:
 
   # Connect on a TCP socket. Omitted by default since the client uses a

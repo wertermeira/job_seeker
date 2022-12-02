@@ -40,7 +40,7 @@ RSpec.configure do |config|
                 properties: {
                   name: { type: :string },
                   email: { type: :string, example: 'email@app.com' },
-                  role: { type: :string, enum: User.roles.keys },
+                  user_role: { type: :string, enum: User.user_roles.keys },
                   attachment_count: {
                     type: :object,
                     properties: {
@@ -50,7 +50,7 @@ RSpec.configure do |config|
                     }
                   }
                 },
-                required: %w[name email role]
+                required: %w[name email user_role]
               },
               relationships: {
                 type: :object,

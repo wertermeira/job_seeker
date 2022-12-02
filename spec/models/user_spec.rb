@@ -6,7 +6,7 @@ RSpec.describe User, type: :model do
   describe 'when db schema' do
     let(:model) { described_class.column_names }
 
-    %w[name email role].each do |column|
+    %w[name email user_role].each do |column|
       it { expect(model).to include(column) }
     end
   end
@@ -19,7 +19,7 @@ RSpec.describe User, type: :model do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_length_of(:name).is_at_most(150) }
 
-    it { is_expected.to define_enum_for(:role).with_values(%i[admin job_seeker employer]).with_prefix(:role) }
+    it { is_expected.to define_enum_for(:user_role).with_values(%i[admin job_seeker employer]).with_prefix(:user_role) }
 
     context 'when custom validate' do
       let(:attachments_attributes) do
@@ -33,14 +33,14 @@ RSpec.describe User, type: :model do
         {
           name: Faker::Name.name,
           email: email,
-          role: role,
+          user_role: user_role,
           attachments_attributes: Array.new(attach_times) { attachments_attributes }
         }
       end
 
       context 'when valid' do
         let(:email) { '' }
-        let(:role) { 'job_seeker' }
+        let(:user_role) { 'job_seeker' }
         let(:kind) { 'resume' }
         let(:attach_times) { 1 }
 
@@ -51,7 +51,7 @@ RSpec.describe User, type: :model do
 
       context 'when valid with email' do
         let(:email) { Faker::Internet.email }
-        let(:role) { 'job_seeker' }
+        let(:user_role) { 'job_seeker' }
         let(:kind) { 'resume' }
         let(:attach_times) { rand(2..5) }
 
@@ -63,7 +63,7 @@ RSpec.describe User, type: :model do
       context 'when is invalid' do
         let(:email) { '' }
         let(:error_message) { I18n.t('errors.messages.require_email_to_multi_attachs') }
-        let(:role) { 'job_seeker' }
+        let(:user_role) { 'job_seeker' }
         let(:kind) { 'resume' }
         let(:attach_times) { rand(2..10) }
 
