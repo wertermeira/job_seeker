@@ -31,3 +31,6 @@
 
 en:
   hello: "Hello world"
+  errors:
+    messages:
+      require_email_to_multi_attachs: to add more resumes. email is required
