@@ -24,7 +24,7 @@ class User < ApplicationRecord
   def validate_max_resume
     return unless (attachment_tally['resume'] || 0) > 1
 
-    errors.add(:attachments_attributes, 'to add more resumes. email is required')
+    errors.add(:attachments_attributes, I18n.t('errors.messages.require_email_to_multi_attachs'))
   end
 
   def attachment_tally

@@ -62,6 +62,7 @@ RSpec.describe User, type: :model do
 
       context 'when is invalid' do
         let(:email) { '' }
+        let(:error_message) { I18n.t('errors.messages.require_email_to_multi_attachs') }
         let(:role) { 'job_seeker' }
         let(:kind) { 'resume' }
         let(:attach_times) { rand(2..10) }
@@ -69,7 +70,7 @@ RSpec.describe User, type: :model do
         it do
           to_validate = described_class.new(user)
           to_validate.valid?
-          expect(to_validate.errors[:attachments_attributes]).to include('to add more resumes. email is required')
+          expect(to_validate.errors[:attachments_attributes]).to include(error_message)
         end
       end
     end
