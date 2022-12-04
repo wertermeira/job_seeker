@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :set_user, only: %i[show update destroy]
 
   def index
-    @users = User.all
+    @users = User.includes(:attachments).all
     render json: @users, include: 'attachments'
   end
 
